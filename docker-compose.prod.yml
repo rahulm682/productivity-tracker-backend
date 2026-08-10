@@ -1,0 +1,53 @@
+services:
+  web:
+    container_name: productivity-backend-prod
+    build: .
+    # Using Gunicorn with 3 workers for production-grade traffic handling
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    ports:
+      - "9001:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - productivity-network
+      
+  redis:
+    container_name: productivity-redis-prod
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - productivity-network
+      
+  celery:
+    container_name: productivity-celery-prod
+    build: .
+    command: celery -A backend worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - productivity-network
+
+  celery-beat:
+    container_name: productivity-celery-beat-prod
+    build: .
+    command: celery -A backend beat --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - productivity-network
+
+networks:
+  productivity-network:
+    driver: bridge
+    
