@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from django.utils import timezone
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
+from django.http import HttpResponse
 from tracker.tasks import dispatch_device_classification_jobs
 from datetime import timedelta
 from .serializers import BrowsingSessionSerializer
@@ -106,3 +107,7 @@ def trigger_classification_cron(request):
         {"message": "Classification dispatched", "task_id": str(result.id)},
         status=status.HTTP_200_OK
     )
+
+
+def health_check(request):
+    return HttpResponse("OK")
