@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.utils import timezone
 from rest_framework import generics
+from rest_framework.decorators import api_view, permission_classes
+from tracker.tasks import dispatch_device_classification_jobs
 from datetime import timedelta
 from .serializers import BrowsingSessionSerializer
 from .models import BrowsingSession
@@ -94,3 +96,13 @@ class TimelineListView(generics.ListAPIView):
         
         return queryset.filter(start_time__gte=time_window).order_by('start_time')
         
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def trigger_classification_cron(request):
+    """Triggered every 5 minutes by external cron to dispatch workflow classification jobs."""
+    result = dispatch_device_classification_jobs.delay()
+    return Response(
+        {"message": "Classification dispatched", "task_id": str(result.id)},
+        status=status.HTTP_200_OK
+    )
