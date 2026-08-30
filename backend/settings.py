@@ -178,3 +178,5 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^moz-extension://.*",
     r"^https://.*",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
