@@ -18,4 +18,4 @@ echo "==> 3. Starting Celery worker (Optimized for 512MB RAM)..."
 celery -A backend worker --loglevel=info --concurrency=1 &
 
 echo "==> 4. Starting Gunicorn web server..."
-exec gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 2
+exec gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 2 --access-logfile -
