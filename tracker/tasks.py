@@ -69,7 +69,7 @@ def classify_device_workflow(self, device_id):
             # Upgraded to Llama 3.3 70B Versatile
             llm = ChatGroq(
                 temperature=0.1, 
-                model_name="llama-3.3-70b-versatile", 
+                model_name="openai/gpt-oss-120b", 
                 api_key=settings.GROQ_API_KEY,
                 max_tokens=1024
             )
